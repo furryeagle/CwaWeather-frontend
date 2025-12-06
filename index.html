@@ -4,25 +4,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>森森天氣</title>
-    <link rel="icon" type="image/png" href="./icon-v2.png">
-    <link rel="apple-touch-icon" href="./icon-v2.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="./icon-v2.png">
+    <title>天氣預報!!</title>
+    <link rel="icon" type="image/png" href="./jojo-icon.png">
+    <link rel="apple-touch-icon" href="./jojo-icon.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="./jojo-icon.png">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;700;900&display=swap"
         rel="stylesheet">
 
     <style>
+        /* 1. 視覺風格：調整配色做成jojo style */
+        /* JoJo Style 配色：強烈撞色與高對比 */
         :root {
-            --ac-green: #7DE1A9;
-            --ac-bg-pattern: #8FD8AF;
-            --ac-cream: #FFFEF2;
-            --ac-yellow: #F9F195;
-            --ac-brown: #796452;
-            --ac-blue: #4FB5D9;
-            --ac-dark: #58504A;
-            --ac-card-border: #E6E0C8;
+            --jojo-pink: #FF69B4;       /* 亮粉 (主要色) */
+            --jojo-yellow: #FFD700;     /* 亮黃 (強調色) */
+            --jojo-dark-blue: #4B0082;  /* 深紫/靛藍 (背景/暗部) */
+            --jojo-red: #DC143C;        /* 漫畫紅 */
+            --jojo-white: #FFFFFF;      /* 白色 */
+            --jojo-text-dark: #222222;  /* 深色文字 */
+            --jojo-border: #000000;     /* 極粗邊框 */
         }
 
         * {
@@ -34,13 +36,15 @@
 
         body {
             font-family: 'Zen Maru Gothic', sans-serif;
-            background-color: var(--ac-green);
-            /* 更細緻的斜紋背景 */
+            background-color: var(--jojo-dark-blue);
+            /* 網點/波紋背景效果 */
             background-image:
-                repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(255, 255, 255, 0.2) 20px, rgba(255, 255, 255, 0.2) 40px);
+                radial-gradient(var(--jojo-pink) 10%, transparent 11%),
+                radial-gradient(var(--jojo-yellow) 10%, transparent 11%);
+            background-size: 40px 40px;
+            background-position: 0 0, 20px 20px;
             min-height: 100vh;
-            color: var(--ac-dark);
-            /* 防止 iOS 左右滑動 */
+            color: var(--jojo-text-dark);
             overflow-x: hidden;
             padding-bottom: 20px;
         }
@@ -51,147 +55,179 @@
             justify-content: space-between;
             align-items: center;
             padding: 15px 20px;
-            background: rgba(255, 255, 255, 0.3);
-            backdrop-filter: blur(10px);
+            /* 透明度降低，保留波紋背景 */
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(5px);
             position: sticky;
             top: 0;
             z-index: 100;
+            border-bottom: 4px solid var(--jojo-border); /* 粗邊框 */
+        }
+        
+        /* 新增：當前時間的樣式 */
+        .time-display {
+            background: var(--jojo-red);
+            color: var(--jojo-white);
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-weight: 900;
+            font-size: 1rem;
+            border: 2px solid var(--jojo-border);
+            box-shadow: 2px 2px 0 var(--jojo-yellow);
+            letter-spacing: 1px;
+            margin: 0 10px; /* 讓它和旁邊的元素有點間隔 */
         }
 
         .location-pill {
-            background: var(--ac-yellow);
-            color: var(--ac-brown);
+            background: var(--jojo-yellow);
+            color: var(--jojo-text-dark);
             padding: 5px 15px;
-            border-radius: 20px;
+            border-radius: 8px; /* 漫畫感方塊 */
             font-weight: 900;
             font-size: 1.1rem;
-            transform: rotate(-2deg);
-            border: 2px solid white;
-            box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.1);
+            /* 輕微傾斜，更有動感 */
+            transform: rotate(-3deg) scale(1.05);
+            border: 3px solid var(--jojo-border);
+            /* 漫畫式粗陰影 */
+            box-shadow: 4px 4px 0 var(--jojo-pink);
+            transition: transform 0.1s;
+        }
+
+        .location-pill:active {
+            transform: rotate(-3deg) translate(2px, 2px);
+            box-shadow: 2px 2px 0 var(--jojo-pink);
         }
 
         .update-pill {
             font-size: 0.8rem;
-            color: white;
-            background: rgba(0, 0, 0, 0.2);
+            color: var(--jojo-white);
+            background: var(--jojo-dark-blue);
             padding: 4px 10px;
-            border-radius: 12px;
+            border-radius: 4px;
+            border: 2px solid var(--jojo-white);
+            font-weight: bold;
         }
 
         .container {
             padding: 20px;
             max-width: 600px;
-            /* 限制在大手機寬度 */
             margin: 0 auto;
         }
 
         /* === 核心：今日焦點卡片 === */
         .hero-card {
-            background: var(--ac-cream);
-            border-radius: 35px;
+            background: var(--jojo-white);
+            border-radius: 12px;
             padding: 30px 25px;
             text-align: center;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-            border: 4px solid white;
+            /* 漫畫式極粗黑邊和陰影 */
+            box-shadow: 8px 8px 0 var(--jojo-border);
+            border: 5px solid var(--jojo-border);
             margin-bottom: 25px;
             position: relative;
         }
 
-        /* 像動森的對話氣泡 */
+        /* 像動森的對話氣泡 -> 改為擬聲詞對話框 */
         .hero-period {
             position: absolute;
-            top: -15px;
+            top: -18px;
             left: 50%;
-            transform: translateX(-50%);
-            background: var(--ac-blue);
-            color: white;
-            padding: 5px 20px;
-            border-radius: 20px;
-            font-weight: bold;
-            border: 3px solid white;
-            box-shadow: 0 4px 0 rgba(0, 0, 0, 0.1);
+            transform: translateX(-50%) scale(1.1);
+            background: var(--jojo-red); /* 誇張的紅色 */
+            color: var(--jojo-white);
+            padding: 8px 25px;
+            border-radius: 5px;
+            font-weight: 900;
+            border: 3px solid var(--jojo-border);
+            box-shadow: 4px 4px 0 var(--jojo-dark-blue);
+            /* 漫畫對話框效果 */
+            clip-path: polygon(0 0, 100% 0, 100% 75%, 75% 75%, 75% 100%, 50% 75%, 0 75%);
         }
-
-        .hero-temp-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-            margin: 15px 0;
-        }
-
+        
+        /* 移除原來的 bounce 動畫，改為 JoJo 的「波紋」或「替身」感 */
         .hero-icon {
-            font-size: 5rem;
-            filter: drop-shadow(0 4px 0 rgba(0, 0, 0, 0.1));
-            animation: bounce 3s infinite;
+            font-size: 6rem; /* 更大 */
+            filter: drop-shadow(5px 5px 0 var(--jojo-dark-blue));
+            /* 輕微的縮放和旋轉動畫 */
+            animation: standPower 3s infinite alternate; 
         }
 
-        @keyframes bounce {
-
-            0%,
-            100% {
-                transform: translateY(0);
+        @keyframes standPower {
+            0% {
+                transform: scale(1) rotate(0deg);
+                filter: drop-shadow(5px 5px 0 var(--jojo-dark-blue));
             }
-
-            50% {
-                transform: translateY(-10px);
+            100% {
+                transform: scale(1.05) rotate(3deg);
+                filter: drop-shadow(8px 8px 0 var(--jojo-red));
             }
         }
 
         .hero-temp {
-            font-size: 4.5rem;
+            font-size: 5rem; /* 更誇張 */
             font-weight: 900;
-            color: var(--ac-brown);
+            color: var(--jojo-red); /* 誇張的紅色 */
             line-height: 1;
+            /* 強烈的外邊框和陰影 */
+            -webkit-text-stroke: 3px var(--jojo-border);
+            text-shadow: 5px 5px 0 var(--jojo-dark-blue);
         }
 
         .hero-desc {
-            font-size: 1.5rem;
-            color: #8A7B70;
+            font-size: 1.8rem;
+            color: var(--jojo-text-dark);
             margin-bottom: 20px;
-            font-weight: bold;
+            font-weight: 900;
+            text-shadow: 2px 2px 0 var(--jojo-yellow); /* 黃色陰影增加立體感 */
         }
 
-        /* === 上班族最愛的：快速建議區 === */
+        /* === 快速建議區 === */
         .advice-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 15px;
             margin-top: 20px;
             padding-top: 20px;
-            border-top: 2px dashed #E0D8C0;
+            /* 漫畫分隔線 */
+            border-top: 3px dashed var(--jojo-dark-blue);
         }
 
         .advice-item {
             display: flex;
             flex-direction: column;
             align-items: center;
-            background: rgba(255, 255, 255, 0.5);
+            background: var(--jojo-yellow); /* 亮黃色背景 */
             padding: 10px;
-            border-radius: 20px;
+            border-radius: 8px;
+            border: 3px solid var(--jojo-border);
+            box-shadow: 3px 3px 0 var(--jojo-red);
         }
 
         .advice-icon {
-            font-size: 2rem;
+            font-size: 2.5rem; /* 更大 */
             margin-bottom: 5px;
+            color: var(--jojo-red); /* 顯眼的紅色圖標 */
         }
 
         .advice-text {
-            font-size: 1.4rem;
+            font-size: 1.5rem;
             font-weight: 900;
-            color: var(--ac-brown);
+            color: var(--jojo-text-dark);
             margin: 5px 0;
             line-height: 1.2;
+            text-shadow: 1px 1px 0 var(--jojo-white);
         }
 
         /* === 稍後預報：橫向滑動區 === */
         .section-title {
-            font-size: 1.2rem;
-            color: white;
+            font-size: 1.5rem;
+            color: var(--jojo-yellow);
             margin-bottom: 15px;
             margin-left: 10px;
             font-weight: 900;
-            text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.1);
+            /* 誇張的文字陰影 */
+            -webkit-text-stroke: 2px var(--jojo-border);
+            text-shadow: 4px 4px 0 var(--jojo-pink);
         }
 
         .scroll-container {
@@ -199,7 +235,6 @@
             overflow-x: auto;
             gap: 15px;
             padding-bottom: 10px;
-            /* 隱藏滾動條但保留功能 */
             scrollbar-width: none;
             -ms-overflow-style: none;
         }
@@ -210,35 +245,38 @@
 
         .mini-card {
             min-width: 140px;
-            background: rgba(255, 255, 255, 0.85);
-            border-radius: 25px;
+            background: var(--jojo-pink); /* 亮粉色 */
+            border-radius: 8px;
             padding: 20px 15px;
             text-align: center;
-            border: 3px solid white;
+            border: 3px solid var(--jojo-border);
+            box-shadow: 3px 3px 0 var(--jojo-dark-blue);
             flex-shrink: 0;
-            /* 防止被擠壓 */
         }
 
         .mini-time {
-            background: var(--ac-green);
-            color: white;
+            background: var(--jojo-red);
+            color: var(--jojo-white);
             padding: 3px 10px;
-            border-radius: 10px;
-            font-size: 0.8rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
             display: inline-block;
             margin-bottom: 10px;
-            font-weight: bold;
+            font-weight: 900;
         }
 
         .mini-icon {
-            font-size: 2.5rem;
+            font-size: 2.8rem;
             margin: 5px 0;
+            color: var(--jojo-white);
+            text-shadow: 2px 2px 0 var(--jojo-dark-blue);
         }
 
         .mini-temp {
-            font-size: 1.2rem;
-            font-weight: 800;
-            color: var(--ac-dark);
+            font-size: 1.4rem;
+            font-weight: 900;
+            color: var(--jojo-text-dark);
+            -webkit-text-stroke: 1px var(--jojo-white);
         }
 
         /* Loading 畫面 */
@@ -248,24 +286,62 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: var(--ac-green);
+            background: var(--jojo-dark-blue);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             z-index: 999;
         }
+
+        /* Loading 畫面文字風格調整 */
+        .loading-screen p {
+            color: var(--jojo-yellow) !important;
+            font-weight: 900;
+            font-size: 1.2rem;
+            margin-top: 20px;
+            -webkit-text-stroke: 1px var(--jojo-border);
+            text-shadow: 3px 3px 0 var(--jojo-red);
+        }
+
+        /* Loading 畫面圖示顏色 */
+        .loading-screen div {
+            font-size: 5rem !important;
+            color: var(--jojo-pink);
+            -webkit-text-stroke: 2px var(--jojo-border);
+            text-shadow: 5px 5px 0 var(--jojo-red);
+            /* 加入「擬聲詞」動畫 */
+            animation: mudo 0.5s infinite alternate; 
+        }
+
+        @keyframes mudo {
+            0% {
+                transform: scale(1);
+            }
+            100% {
+                transform: scale(1.1);
+            }
+        }
+        
+        /* 調整 status-bar 佈局以容納時間 */
+        .status-bar-group {
+            display: flex;
+            align-items: center;
+        }
     </style>
 </head>
 
 <body>
     <div id="loading" class="loading-screen">
-        <div style="font-size: 4rem; animation: bounce 2s infinite;">☁️</div>
-        <p style="color: white; font-weight: bold; margin-top: 20px;">正在觀測雲的流動...</p>
+        <div style="font-size: 4rem; animation: bounce 2s infinite;">👊</div>
+        <p>歐啦歐啦歐啦...</p>
     </div>
     <div class="status-bar">
-        <div class="location-pill">📍 高雄</div>
-        <div id="updateTime" class="update-pill">更新中...</div>
+        <div class="status-bar-group">
+            <div class="location-pill">📍 臺中 (區域 STAND)</div>
+            <div id="currentTime" class="time-display">00:00:00</div> 
+        </div>
+        <div id="updateTime" class="update-pill">STAND POWER! 更新中...</div>
     </div>
 
     <div class="container" id="mainContent" style="display: none;">
@@ -273,41 +349,56 @@
         <div id="heroCard">
         </div>
 
-        <h3 class="section-title">稍後預報</h3>
+        <h3 class="section-title">下一回合預報!!</h3>
         <div class="scroll-container" id="futureForecasts">
         </div>
 
     </div>
 
     <script>
-        const API_URL = "https://cwa-backend-api.zeabur.app/api/weather/kaohsiung";
+        const API_URL = "https://jieuno-weather.zeabur.app/api/weather/taichung";
+
+        // 函式：更新當前時間
+        function updateClock() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            
+            // 格式化時間為 HH:MM:SS
+            document.getElementById('currentTime').textContent = `${hours}:${minutes}:${seconds}`;
+        }
+        
+        // 每秒呼叫一次 updateClock
+        setInterval(updateClock, 1000); 
 
         function getWeatherIcon(weather) {
-            if (!weather) return "🌤️";
+            // 替換為 JoJo 風格的表情符號
+            if (!weather) return "✨";
             if (weather.includes("晴")) return "☀️";
-            if (weather.includes("多雲")) return "⛅";
+            if (weather.includes("多雲")) return "🌥️";
             if (weather.includes("陰")) return "☁️";
-            if (weather.includes("雨")) return "🌧️";
-            if (weather.includes("雷")) return "⛈️";
-            return "🌤️";
+            if (weather.includes("雨")) return "💧"; // 使用水滴強調「濕」
+            if (weather.includes("雷")) return "⚡"; // 閃電更有衝擊力
+            return "✨";
         }
 
         function getAdvice(rainProb, maxTemp) {
-            let rainIcon = "🌂";
-            let rainText = "不用帶傘";
+            let rainIcon = "👍";
+            let rainText = "沒有雨水替身攻擊";
             if (parseInt(rainProb) > 30) {
-                rainIcon = "☂️";
-                rainText = "記得帶傘！";
+                rainIcon = "☔";
+                rainText = "帶傘！小心濕漉漉！";
             }
-
-            let clothIcon = "👕";
-            let clothText = "舒適穿搭";
+            // 調整建議文案，加入 JoJo 元素
+            let clothIcon = "🌟";
+            let clothText = "歐拉歐拉！舒適穿搭";
             if (parseInt(maxTemp) >= 28) {
-                clothIcon = "🎽";
-                clothText = "短袖出發";
+                clothIcon = "🥵";
+                clothText = "太熱了！短褲、背心！";
             } else if (parseInt(maxTemp) <= 20) {
-                clothIcon = "🧥";
-                clothText = "加件外套";
+                clothIcon = "🧣";
+                clothText = "穿上替身斗篷！";
             }
 
             return { rainIcon, rainText, clothIcon, clothText };
@@ -315,11 +406,11 @@
 
         function getTimePeriod(startTime) {
             const hour = new Date(startTime).getHours();
-            if (hour >= 5 && hour < 11) return "早晨";
-            if (hour >= 11 && hour < 14) return "中午";
-            if (hour >= 14 && hour < 18) return "下午";
-            if (hour >= 18 && hour < 23) return "晚上";
-            return "深夜";
+            if (hour >= 5 && hour < 11) return "黎明戰鬥";
+            if (hour >= 11 && hour < 14) return "中午覺醒";
+            if (hour >= 14 && hour < 18) return "下午決鬥";
+            if (hour >= 18 && hour < 23) return "夜晚波紋";
+            return "深夜潛伏";
         }
 
         function renderWeather(data) {
@@ -334,23 +425,24 @@
 
             document.getElementById('heroCard').innerHTML = `
                         <div class="hero-card">
-                            <div class="hero-period">${period}</div>
+                            <div class="hero-period">${period}!!</div>
+                            <div style="font-size:0.9rem; color:var(--jojo-red); margin-bottom: 5px; font-weight: bold;">STAND! 現在溫度替身是</div>
                             <div class="hero-temp-container">
                                 <div class="hero-icon">${getWeatherIcon(current.weather)}</div>
                                 <div class="hero-temp">${avgTemp}°</div>
                             </div>
-                            <div class="hero-desc">${current.weather}</div>
+                            <div class="hero-desc">氣象狀態：${current.weather}</div>
                             
                             <div class="advice-grid">
                                 <div class="advice-item">
                                     <div class="advice-icon">${advice.rainIcon}</div>
                                     <div class="advice-text">${advice.rainText}</div>
-                                    <div style="font-size:0.7rem; color:#999">降雨率 ${current.rain}</div>
+                                    <div style="font-size:0.7rem; color:var(--jojo-text-dark); font-weight:bold;">降雨率 ${current.rain}%</div>
                                 </div>
                                 <div class="advice-item">
                                     <div class="advice-icon">${advice.clothIcon}</div>
                                     <div class="advice-text">${advice.clothText}</div>
-                                    <div style="font-size:0.7rem; color:#999">最高溫 ${current.maxTemp}°</div>
+                                    <div style="font-size:0.7rem; color:var(--jojo-text-dark); font-weight:bold;">最高溫 ${current.maxTemp}°C</div>
                                 </div>
                             </div>
                         </div>
@@ -360,26 +452,26 @@
             const scrollContainer = document.getElementById('futureForecasts');
             scrollContainer.innerHTML = '';
 
-            // 抓今天的日期數字 (例如 24)
             const todayDate = new Date().getDate();
 
             others.forEach(f => {
                 let p = getTimePeriod(f.startTime);
 
-                // 判斷該預報的日期是否跟今天不同，不同就是明天
                 const fDate = new Date(f.startTime);
                 if (fDate.getDate() !== todayDate) {
-                    p = "明天" + p;
+                    p = "⚡明日 " + p;
+                } else {
+                    p = "🔥本日 " + p;
                 }
 
                 scrollContainer.innerHTML += `
-                            <div class="mini-card">
-                                <div class="mini-time">${p}</div>
-                                <div class="mini-icon">${getWeatherIcon(f.weather)}</div>
-                                <div class="mini-temp">${f.minTemp}° - ${f.maxTemp}°</div>
-                                <div style="font-size:0.8rem; color:#888; margin-top:5px;">💧${f.rain}</div>
-                            </div>
-                        `;
+                                <div class="mini-card">
+                                    <div class="mini-time">${p}</div>
+                                    <div class="mini-icon">${getWeatherIcon(f.weather)}</div>
+                                    <div class="mini-temp">${f.minTemp}° ~ ${f.maxTemp}°</div>
+                                    <div style="font-size:0.8rem; color:var(--jojo-text-dark); margin-top:5px; font-weight:bold;">💧 替身：${f.rain}%</div>
+                                </div>
+                            `;
             });
 
             // 3. 右上角顯示今日日期
@@ -387,27 +479,23 @@
             const month = now.getMonth() + 1;
             const date = now.getDate();
             const dayIndex = now.getDay();
-            const days = ["週日", "週一", "週二", "週三", "週四", "週五", "週六"];
+            const days = ["日曜", "月曜", "火曜", "水曜", "木曜", "金曜", "土曜"]; // 使用日文漢字
 
-            document.getElementById('updateTime').textContent = `${month}月${date}日 ${days[dayIndex]}`;
+            document.getElementById('updateTime').textContent = `時空同步：${month}月${date}日 ${days[dayIndex]}!!`;
         }
 
         async function fetchWeather() {
             try {
-                // 1. 定義「最低等待時間」：1500 毫秒 (1.5秒)
+                // 初始化時間顯示
+                updateClock();
+                
                 const delayPromise = new Promise(resolve => setTimeout(resolve, 1500));
-
-                // 2. 定義「抓取資料」的工作
                 const fetchPromise = fetch(API_URL).then(res => res.json());
-
-                // 3. Promise.all 會等待「兩個都完成」才會往下走
-                // result 陣列裡，第一個是 delay 的結果(沒用到)，第二個是 api 的 json 資料
                 const [_, json] = await Promise.all([delayPromise, fetchPromise]);
 
                 if (json.success) {
                     renderWeather(json.data);
 
-                    // 資料處理好後，隱藏 Loading，顯示主畫面
                     document.getElementById('loading').style.display = 'none';
                     document.getElementById('mainContent').style.display = 'block';
                 } else {
@@ -415,7 +503,7 @@
                 }
             } catch (e) {
                 console.error(e);
-                alert("天氣資料讀取失敗，狸克把網路線咬斷了！");
+                alert("氣象替身失效了！MUDA MUDA MUDA！");
             }
         }
 
